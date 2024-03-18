@@ -1,0 +1,10 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: Depository app using S3, Lambda, and API Gateway
+
+Resources:
+  DepositoryS3Bucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: depositorybalance24
