@@ -5,7 +5,7 @@ Description: Depository app using S3, Lambda, and API Gateway
 
 Resources:
   DepositoryS3Bucket:
-    Type: 'AWS::S3::Bucket'
+    Type: "AWS::S3::Bucket"
     Properties:
       BucketName: depositorybalance24
 
@@ -20,8 +20,42 @@ Resources:
               Service:
                 - lambda.amazonaws.com
             Action:
-              - 'sts:AssumeRole'
+              - "sts:AssumeRole"
       Description: IAM Role for Lambda to access S3
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AmazonS3FullAccess
       RoleName: DepositoryLambdaExecutionRole
+
+  DepositoryLambdaFunction:
+    DependsOn: DepositoryLambdaExecutionRole
+    Type: AWS::Lambda::Function
+    Properties:
+      Runtime: nodejs16.x
+      Role: !GetAtt DepositoryLambdaExecutionRole.Arn
+      Handler: index.handler
+      Code:
+        ZipFile: |
+          const AWS = require("aws-sdk");
+          const s3 = new AWS.S3();
+
+          exports.handler = async (event) => {
+            // const { bucketName, objKey } = event;
+            const bucketName = "depositorybalance24";
+            const objKey = "depositoryBalance.json";
+
+            const params = {
+              Bucket: bucketName,
+              Key: objKey,
+            };
+
+            try {
+              const s3Object = await s3.getObject(params).promise();
+              console.log(s3Object.Body.toString());
+              return s3Object.Body.toString();
+            } catch (err) {
+              console.log(err);
+              throw err;
+            }
+          };
+      Description: Lambda function to read a S3 depository file
+      Timeout: 60
