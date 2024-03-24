@@ -59,3 +59,16 @@ Resources:
           };
       Description: Lambda function to read a S3 depository file
       Timeout: 60
+
+  DepositoryRESTAPI:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: DepositoryStatusAPI
+      Description: Depository Status API
+
+  DepositoryStatusResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !GetAtt DepositoryRESTAPI.RootResourceId
+      PathPart: depository-status
+      RestApiId: !Ref DepositoryRESTAPI

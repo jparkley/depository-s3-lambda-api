@@ -9,9 +9,7 @@
 
 
 # misc
-depositoryBalance.json
-depositoryLambdaFunction.js
-
+/z-temp/*
 
 # debug
 
